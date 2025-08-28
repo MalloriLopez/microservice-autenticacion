@@ -23,7 +23,7 @@ public class UserEntity {
     @Id
     @Column("user_id")
     private String userId;
-     @Column("document_id")
+    @Column("document_id")
     private String documentId;
     private String name;
     private String lastname;

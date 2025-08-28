@@ -4,6 +4,7 @@ import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.r2dbc.entities.UserEntity;
 import co.com.bancolombia.r2dbc.helper.ReactiveAdapterOperations;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
@@ -32,6 +33,7 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         return repository.deleteByUserId(id);
     }
 
+    @Transactional
     @Override
     public Mono<User> save(User u) {
         return super.save(u);

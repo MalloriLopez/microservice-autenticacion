@@ -8,5 +8,8 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.6.3'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
     implementation 'org.springframework:spring-tx'
-    implementation('org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.11')
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.11'
+    implementation 'io.r2dbc:r2dbc-spi:1.0.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+
 }
