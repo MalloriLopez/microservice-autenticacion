@@ -7,4 +7,6 @@ public interface IUserUseCase {
 
     Mono<User> saveUser(User user);
 
+    Mono<Boolean> existsUserByEmail(String email);
+
 }

@@ -33,5 +33,5 @@ public class UserEntity {
     private String email;
     private String phone;
     @Column("base_salary")
-    private BigInteger baseSalary;
+    private BigInteger baseSalary; //cambios double
 }

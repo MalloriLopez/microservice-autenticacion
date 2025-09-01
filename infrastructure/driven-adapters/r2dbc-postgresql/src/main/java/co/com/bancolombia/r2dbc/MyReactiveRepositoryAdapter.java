@@ -28,26 +28,12 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         super(repository, mapper, UserEntity -> mapper.map(UserEntity, User.class));
     }
 
-    @Override
-    public Mono<Void> deleteById(String id) {
-        return repository.deleteByUserId(id);
-    }
-
     @Transactional
     @Override
     public Mono<User> save(User u) {
         return super.save(u);
     }
 
-    @Override
-    public Mono<User> findById(String id) {
-        return super.findById(id);
-    }
-
-    @Override
-    public Flux<User> findAll(){
-        return super.findAll();
-    }
 
     @Override
     public Mono<Boolean> existsByEmail(String email) {

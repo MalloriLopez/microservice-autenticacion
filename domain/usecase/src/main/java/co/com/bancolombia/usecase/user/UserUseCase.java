@@ -19,4 +19,11 @@ public class UserUseCase implements IUserUseCase {
             return userRepository.save(user);
         });
     }
+
+    @Override
+    public Mono<Boolean> existsUserByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+
 }

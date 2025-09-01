@@ -12,7 +12,7 @@ public record UserRecordResponse(
     String address,
     String email,
     String phone,
-    BigInteger baseSalary
+    Double baseSalary
 ) {
-    
+
 }

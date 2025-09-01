@@ -1,6 +1,7 @@
 package co.com.bancolombia.api;
 
 import co.com.bancolombia.model.user.User;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,6 @@ public class Handler {
 private final RequestValidator requestValidator;
 private  final UserUseCase userUseCase;
 private final UserDTOMapper userDTOMapper;
-private final TransactionalOperator transactionalOperator;
 
     public Mono<ServerResponse> saveUseCase(ServerRequest serverRequest) {
 
@@ -35,15 +35,19 @@ private final TransactionalOperator transactionalOperator;
         .map(userDTOMapper::toModel)
         .flatMap(userRequest -> {
             log.info("Usuario recibido: {}", userRequest.toString());
-            if (userRequest.getBirthDate() != null && userRequest.getBirthDate().isAfter(LocalDate.now())) {
-                log.warn("Fecha de nacimiento inválida para usuario: {}", userRequest.getEmail());
-                throw new IllegalArgumentException("La fecha de nacimiento no puede ser futura");
-            }
             return userUseCase.saveUser(userRequest)
                     .doOnSuccess(saved -> log.info("Usuario guardado: {}", saved.getEmail()));
-        }).flatMap(savedUser -> ServerResponse.ok()
+        }).flatMap(savedUser -> ServerResponse.status(HttpResponseStatus.CREATED.code())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(userDTOMapper.toResponse(savedUser))
-         .as(transactionalOperator::transactional) );
+                    .bodyValue(userDTOMapper.toResponse(savedUser)) );
+    }
+
+    public Mono<ServerResponse> existsUserByEmailUseCase(ServerRequest serverRequest) {
+        log.info("Usuario recibidoexistsUserByEmailUseCase");
+        String email = serverRequest.pathVariable("email");
+        return userUseCase.existsUserByEmail(email)
+                .flatMap( exist -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue("{\"existsUser\": " + exist + "}"));
     }
 }

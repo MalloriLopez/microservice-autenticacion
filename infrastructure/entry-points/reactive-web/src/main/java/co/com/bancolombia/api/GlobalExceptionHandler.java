@@ -6,10 +6,13 @@ import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.codec.DecodingException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Mono;
 
 import java.net.ConnectException;
 
@@ -19,73 +22,76 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(DuplicateEmailException.class)
-    public ProblemDetail handleDuplicateEmailException(DuplicateEmailException ex) {
+    public Mono<ResponseEntity<ProblemDetail>> handleDuplicateEmailException(DuplicateEmailException ex) {
         log.warn("Correo duplicado: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatus(409);
         problem.setTitle("Correo duplicado");
         problem.setDetail(ex.getMessage());
-        return problem;
+        return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).body(problem));
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ProblemDetail handleValidationException(ValidationException ex) {
+    public Mono<ResponseEntity<ProblemDetail>> handleValidationException(ValidationException ex) {
         log.warn("Error de validación en DTO: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatus(400);
         problem.setTitle("Bad Request");
         problem.setDetail(ex.getMessage());
-        return problem;
+        return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
+    public Mono<ResponseEntity<ProblemDetail>> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("Error de validación: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatus(400);
         problem.setTitle("Bad Request");
         problem.setDetail(ex.getMessage());
-        return problem;
+        return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem));
     }
 
     @ExceptionHandler(DecodingException.class)
-    public ProblemDetail handleDecodingException(DecodingException ex) {
+    public Mono<ResponseEntity<ProblemDetail>> handleDecodingException(DecodingException ex) {
         log.error("Error de deserialización: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatus(400);
         problem.setTitle("Bad Request");
         problem.setDetail("Formato de solicitud inválido");
-        return problem;
+        return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem));
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ProblemDetail handleResponseStatusException(ResponseStatusException ex) {
-        if (ex.getStatusCode().value() == 404) {
-            log.error("Recurso no encontrado: {}", ex.getMessage());
-            ProblemDetail problem = ProblemDetail.forStatus(404);
+    public Mono<ResponseEntity<ProblemDetail>> handleResponseStatusException(ResponseStatusException ex) {
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+
+        ProblemDetail problem = ProblemDetail.forStatus(status);
+
+        if (status == HttpStatus.NOT_FOUND) {
+            log.warn("Recurso no encontrado: {}", ex.getMessage());
             problem.setTitle("Not Found");
             problem.setDetail("El recurso solicitado no existe");
-            return problem;
+        } else {
+            log.error("Error de estado {}: {}", status.value(), ex.getMessage());
+            problem.setTitle(status.getReasonPhrase());
+            problem.setDetail(ex.getReason() != null ? ex.getReason() : "Ocurrió un error al procesar la solicitud");
         }
-        log.error("Error de estado de respuesta: {}", ex.getMessage());
-        ProblemDetail problem = ProblemDetail.forStatus(ex.getStatusCode());
-        problem.setTitle("Error");
-        problem.setDetail("Ocurrió un error inesperado al procesar la solicitud");
-        return problem;
+        return Mono.just(ResponseEntity.status(status).body(problem));
     }
 
+
     @ExceptionHandler(R2dbcException.class)
-    public ProblemDetail handleR2dbcBadGrammarException(R2dbcException ex) {
+    public Mono<ResponseEntity<ProblemDetail>> handleR2dbcBadGrammarException(R2dbcException ex) {
         log.error("Error con la base de datos: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatus(500);
         problem.setTitle("Internal Server Error");
         problem.setDetail("Ocurrió un error en el servidor");
-        return problem;
+        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem));
     }
 
     @ExceptionHandler(ConnectException.class)
-    public ProblemDetail handleConnectException(ConnectException ex) {
+    public Mono<ResponseEntity<ProblemDetail>> handleConnectException(ConnectException ex) {
         log.error("No se pudo conectar a la base de datos: {}", ex.getMessage());
         ProblemDetail problem = ProblemDetail.forStatus(500);
         problem.setTitle("Internal Server Error");
         problem.setDetail("Ocurrió un error en el servidor");
-        return problem;
+        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem));
     }
 
 }

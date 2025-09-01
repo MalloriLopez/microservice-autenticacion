@@ -27,5 +27,5 @@ public class User {
     private String address;
     private String email;
     private String phone;
-    private BigInteger baseSalary;
+    private BigInteger baseSalary; //cambios double
 }
