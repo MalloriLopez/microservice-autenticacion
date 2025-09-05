@@ -1,6 +1,8 @@
 package co.com.bancolombia.api;
 
+import co.com.bancolombia.model.exceptions.DataIntegrityException;
 import co.com.bancolombia.model.exceptions.DuplicateEmailException;
+import co.com.bancolombia.model.exceptions.InvalidCredentialsException;
 import io.r2dbc.spi.R2dbcException;
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
@@ -20,6 +22,41 @@ import java.net.ConnectException;
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public Mono<ResponseEntity<ProblemDetail>> handleAccessDenied(Exception ex) {
+        ProblemDetail p = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        p.setTitle("Forbidden");
+        p.setDetail(ex.getMessage());
+        return Mono.just(ResponseEntity.status(HttpStatus.FORBIDDEN).body(p));
+    }
+
+    @ExceptionHandler({org.springframework.security.oauth2.server.resource.InvalidBearerTokenException.class,
+            org.springframework.security.core.AuthenticationException.class})
+    public Mono<ResponseEntity<ProblemDetail>> handleAuthErrors(Exception ex) {
+        ProblemDetail p = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        p.setTitle("Unauthorized");
+        p.setDetail(ex.getMessage());
+        return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(p));
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public Mono<ResponseEntity<ProblemDetail>> handleInvalidCredentials(InvalidCredentialsException ex) {
+        log.warn("Intento de login con credenciales inválidas: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("Unauthorized");
+        problem.setDetail(ex.getMessage());
+        return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem));
+    }
+
+    @ExceptionHandler(DataIntegrityException.class)
+    public Mono<ResponseEntity<ProblemDetail>> handleDataIntegrity(DataIntegrityException ex) {
+        log.error("Inconsistencia de datos: {}", ex.getMessage(), ex);
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        problem.setTitle("Error interno de datos");
+        problem.setDetail(ex.getMessage());
+        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem));
+    }
 
     @ExceptionHandler(DuplicateEmailException.class)
     public Mono<ResponseEntity<ProblemDetail>> handleDuplicateEmailException(DuplicateEmailException ex) {

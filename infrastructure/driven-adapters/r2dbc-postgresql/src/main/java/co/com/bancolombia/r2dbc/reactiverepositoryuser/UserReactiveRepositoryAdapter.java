@@ -1,4 +1,4 @@
-package co.com.bancolombia.r2dbc;
+package co.com.bancolombia.r2dbc.reactiverepositoryuser;
 
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.UserRepository;
@@ -6,20 +6,19 @@ import co.com.bancolombia.r2dbc.entities.UserEntity;
 import co.com.bancolombia.r2dbc.helper.ReactiveAdapterOperations;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.Flux;
 
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
+public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     User,
     UserEntity,
     String,
-    MyReactiveRepository
+        UserReactiveRepository
 > implements UserRepository
 {
-    public MyReactiveRepositoryAdapter(MyReactiveRepository repository, ObjectMapper mapper) {
+    public UserReactiveRepositoryAdapter(UserReactiveRepository repository, ObjectMapper mapper) {
         /**
          *  Could be use mapper.mapBuilder if your domain model implement builder pattern
          *  super(repository, mapper, d -> mapper.mapBuilder(d,ObjectModel.ObjectModelBuilder.class).build());

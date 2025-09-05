@@ -23,15 +23,29 @@ public class UserEntity {
     @Id
     @Column("user_id")
     private String userId;
+
     @Column("document_id")
     private String documentId;
+
     private String name;
+
     private String lastname;
+
     @Column("birth_date")
     private LocalDate birthDate;
+
     private String address;
+
     private String email;
+
     private String phone;
+
+    @Column("id_rol")
+    private Long idRol;
+
     @Column("base_salary")
-    private BigInteger baseSalary; //cambios double
+    private Double baseSalary;
+
+    @Column("password_hash")
+    private String passwordHash;
 }

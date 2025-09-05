@@ -27,5 +27,7 @@ public class User {
     private String address;
     private String email;
     private String phone;
-    private BigInteger baseSalary; //cambios double
+    private Long idRol;
+    private Double baseSalary;
+    private String passwordHash;
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -28,10 +29,11 @@ private final RequestValidator requestValidator;
 private  final UserUseCase userUseCase;
 private final UserDTOMapper userDTOMapper;
 
+    @PreAuthorize("hasAnyRole('ADMIN','ASESOR')")
     public Mono<ServerResponse> saveUseCase(ServerRequest serverRequest) {
 
         return serverRequest.bodyToMono(CreateUserRecord.class)
-        .flatMap(requestValidator::validateUser)
+        .flatMap(requestValidator::validate)
         .map(userDTOMapper::toModel)
         .flatMap(userRequest -> {
             log.info("Usuario recibido: {}", userRequest.toString());

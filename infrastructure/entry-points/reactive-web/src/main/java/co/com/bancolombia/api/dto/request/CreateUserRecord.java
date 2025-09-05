@@ -30,10 +30,14 @@ public record CreateUserRecord(
 
     String phone,
 
+    Long idRol,
+
     @NotNull(message = "El salario base no puede ser nulo")
     @Min(value = 0, message = "El salario base no puede ser un valor negativo")
     @Max(value = 15000000, message = "El salario base no puede ser mayor a $15,000,000")
-    BigInteger baseSalary
+    BigInteger baseSalary,
+
+    String passwordHash
 ) {
     
 }

@@ -11,6 +11,7 @@ public record UserRecordResponse(
     LocalDate birthDate,
     String address,
     String email,
+    Long idRol,
     String phone,
     Double baseSalary
 ) {
