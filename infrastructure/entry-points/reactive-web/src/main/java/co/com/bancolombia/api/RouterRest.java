@@ -3,6 +3,7 @@ package co.com.bancolombia.api;
 import co.com.bancolombia.api.auth.LoginHandler;
 import co.com.bancolombia.api.dto.request.CreateUserRecord;
 import co.com.bancolombia.api.dto.response.UserRecordResponse;
+import co.com.bancolombia.api.user.UserSummaryHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -70,11 +71,12 @@ public class RouterRest {
             )
     })
 
-    public RouterFunction<ServerResponse> routerFunction(Handler handler, LoginHandler loginHandler) {
+    public RouterFunction<ServerResponse> routerFunction(Handler handler, LoginHandler loginHandler, UserSummaryHandler userSummaryHandler) {
         return route()
                 .POST("/api/v1/users" , handler::saveUseCase)
                 .GET("/api/v1/users/email/{email}/exists" , handler::existsUserByEmailUseCase)
                 .POST("/api/v1/login", loginHandler::login)
+                .GET("/api/v1/users/email/{email}/summary", userSummaryHandler::getByEmail)
                 .build();
     }
 }

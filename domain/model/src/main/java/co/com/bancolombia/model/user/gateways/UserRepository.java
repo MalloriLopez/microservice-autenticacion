@@ -10,5 +10,7 @@ public interface UserRepository {
 
     Mono<Boolean> existsByEmail(String e);
 
+    Mono<User> findByEmail(String e);
+
 }
 

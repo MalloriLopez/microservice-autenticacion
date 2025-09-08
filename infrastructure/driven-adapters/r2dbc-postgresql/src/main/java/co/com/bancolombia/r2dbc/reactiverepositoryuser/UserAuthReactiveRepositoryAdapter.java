@@ -3,6 +3,7 @@ package co.com.bancolombia.r2dbc.reactiverepositoryuser;
 import co.com.bancolombia.model.auth.UserAuth;
 import co.com.bancolombia.model.auth.gateways.UserAuthRepository;
 import co.com.bancolombia.model.exceptions.DataIntegrityException;
+import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.r2dbc.entities.RolEntity;
 import co.com.bancolombia.r2dbc.entities.UserEntity;
 import co.com.bancolombia.r2dbc.reactiverepositoryrol.RolReactiveRepository;
@@ -30,7 +31,7 @@ public class UserAuthReactiveRepositoryAdapter implements UserAuthRepository {
                 );
     }
 
-    private UserAuth toDomain(UserEntity u, RolEntity r) {
+    private UserAuth toDomain(User u, RolEntity r) {
         return UserAuth.builder()
                 .id(u.getUserId())
                 .email(u.getEmail())
