@@ -13,3 +13,7 @@ public class NoOpHashService implements PasswordHashService {
     @Override public Mono<String> encode(String raw) { return Mono.just(raw); }
     @Override public Mono<Boolean> matches(String raw, String stored) { return Mono.just(Objects.equals(raw, stored)); }
 }
+
+
+
+

@@ -1,6 +1,5 @@
 package co.com.bancolombia.api.dto.request;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 
@@ -28,14 +27,14 @@ public record CreateUserRecord(
     @Email(message = "El correo electrónico no tiene un formato válido")
     String email,
 
-    String phone,
-
     Long idRol,
+
+    String phone,
 
     @NotNull(message = "El salario base no puede ser nulo")
     @Min(value = 0, message = "El salario base no puede ser un valor negativo")
     @Max(value = 15000000, message = "El salario base no puede ser mayor a $15,000,000")
-    BigInteger baseSalary,
+    Double baseSalary,
 
     String passwordHash
 ) {

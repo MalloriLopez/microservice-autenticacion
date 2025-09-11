@@ -49,8 +49,9 @@ public class HandlerTest {
                 LocalDate.of(1990, 1, 1),
                 "Calle 123",
                 "maria@example.com",
+                1L,
                 "3001234567",
-                BigInteger.valueOf(5000000)
+                5000000.0
         );
 
         User userModel = mock(User.class);
@@ -66,14 +67,15 @@ public class HandlerTest {
                 LocalDate.of(1990, 1, 1),      // birthDate
                 "Cra 10 #20-30",               // address
                 "maria@example.com",          // email
+                1L,                            //Id Rol
                 "3101234567",                  // phone
-                Double.valueOf(5000000) // baseSalary
+                5000000.0                       // baseSalary
         );
 
         ServerRequest request = mock(ServerRequest.class);
 
         when(request.bodyToMono(CreateUserRecord.class)).thenReturn(Mono.just(dto));
-        when(requestValidator.validateUser(dto)).thenReturn(Mono.just(dto));
+        when(requestValidator.validate(dto)).thenReturn(Mono.just(dto));
         when(userDTOMapper.toModel(dto)).thenReturn(userModel);
         when(userUseCase.saveUser(userModel)).thenReturn(Mono.just(userModel));
         when(userDTOMapper.toResponse(userModel)).thenReturn(response);
@@ -89,7 +91,7 @@ public class HandlerTest {
                 })
                 .verifyComplete();
 
-        verify(requestValidator).validateUser(dto);
+        verify(requestValidator).validate(dto);
         verify(userUseCase).saveUser(userModel);
         verify(userDTOMapper).toResponse(userModel);
     }
