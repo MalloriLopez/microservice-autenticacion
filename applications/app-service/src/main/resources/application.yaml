@@ -1,6 +1,7 @@
 server:
   port: 8080
 spring:
+  #docker
   flyway:
     enabled: true
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
@@ -32,16 +33,25 @@ cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 adapters:
   r2dbc:
+    #docker
     host: ${DB_HOST}
     port: ${DB_PORT}
     database: ${DB_NAME}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     schema: ${DB_SCHEMA}
+    #local
+#    host: "localhost"
+#    port: 5432
+#    username: "postgres"
+#    password: "postgres"
+#    database: "microservice-autenticacion"
+
 security:
   jwt:
-    secret: ${JWT_SECRET}
-    expiration-seconds: 3600
+    secret: ${JWT_SECRET} #docker
+    #secret: "VGhpc0lzQVNlY3JldEJhc2U2NEtleVdpdGgzMmJ5dGVzISEhISE=" #local
+    expiration-seconds: 5184000
     issuer: "autenticacion"
 logging:
   level:
