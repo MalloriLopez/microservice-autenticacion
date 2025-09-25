@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .authorizeExchange(ex -> ex
 
                         .pathMatchers("/api/v1/login").permitAll()
-                        .pathMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .pathMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/actuator/**").permitAll()
                         .pathMatchers("/h2/**").permitAll()
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
@@ -61,7 +61,6 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN","ASESOR")
                         .pathMatchers(HttpMethod.POST, "/api/v1/solicitudes").hasRole("CLIENTE")
                         .pathMatchers(HttpMethod.GET, "/api/v1/users/email/{email}/exists").authenticated()
-                        //.pathMatchers(HttpMethod.GET, "/api/v1/users/email/{email}/summary").hasAnyRole("CLIENTE", "ASESOR")
 
                         .anyExchange().authenticated()
                 )
